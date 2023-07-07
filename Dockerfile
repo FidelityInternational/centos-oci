@@ -1,5 +1,26 @@
-FROM oraclelinux:7-slim
+FROM alpine:latest
 
-RUN yum-config-manager --enable ol7_developer
-RUN yum-config-manager --enable ol7_developer_EPEL
-RUN yum -y install terraform python-oci-cli oci-utils
+RUN apk add bash \
+  util-linux \
+  python3 \
+  git \
+  make cmake \
+  which \
+  libnsl libaio \
+  unzip \
+  jq \
+  diffutils \
+  sudo \
+  gcc
+
+RUN python -m ensurepip --upgrade
+
+RUN pip3 install -U pip setuptools
+
+RUN pip3 install oci-cli \
+  terraform-validate \
+  python-hcl2
+
+RUN apk add terraform --repository=https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+
+RUN echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
